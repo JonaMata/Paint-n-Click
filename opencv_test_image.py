@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-frame = cv2.imread('images/heart_whiteboard.jpg', cv2.IMREAD_UNCHANGED)
+frame = cv2.imread('test_images/heart_whiteboard.jpg', cv2.IMREAD_UNCHANGED)
 # Resize image if it is too large
 if frame.shape[0] > 720 and frame.shape[1] > 960:
 	frame = cv2.resize(frame, (1080, 720), cv2.INTER_LANCZOS4)
