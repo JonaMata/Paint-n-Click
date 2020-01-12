@@ -14,5 +14,5 @@ class Door(pygame.sprite.Sprite):
 		self.rect.x = pos[0]-size/2
 		self.rect.y = pos[1]-size/2
 
-	def handle_mouse_pressed(self):
+	def open(self):
 		self.image = self.images[1]

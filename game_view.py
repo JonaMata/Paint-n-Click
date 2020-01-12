@@ -1,69 +1,42 @@
 import sys
 import pygame
-from sprites.ball import Ball
-from sprites.door import Door
+from levels import LevelManager
 
 
 class Game:
 	def __init__(self):
 		pygame.init()
 		self.size = (500, 500)
-		self.center = (self.size[0]/2, self.size[1]/2)
 		self.screen = pygame.display.set_mode(self.size, pygame.RESIZABLE)
 
 		# initialize time variables
 		self.time = pygame.time.get_ticks()
-		self.delta_time = 0
+		self.dt = 0
 
-		# set colors
-		self.colors = {
-			"white": (255, 255, 255),
-			"black": (0, 0, 0)
-		}
-
-		# Assign sprites
-		self.door = Door(self.center, 100)
-		self.ball = Ball(30, self.colors["black"])
-
-		self.sprite_list = pygame.sprite.Group()
-		self.sprite_list.add((
-			self.ball,
-			self.door
-		))
+		self.level_manager = LevelManager(self.size)
 
 	def game_loop(self):
+		# set delta time
 		current_time = pygame.time.get_ticks()
-		self.delta_time = current_time - self.time
+		self.dt = current_time - self.time
 		self.time = current_time
 
 		self.handle_events()
-		self.update_game(self.delta_time)
-		self.draw_components()
+		self.update(self.dt)
+		self.render()
 
-	def update_game(self, dt):
-		self.sprite_list.update(dt)
+	def update(self, dt):
+		self.level_manager.level.update(dt)
 
-	def draw_components(self):
-		self.screen.fill(self.colors["white"])
-
-		self.sprite_list.draw(self.screen)
-
+	def render(self):
+		self.screen.fill((255, 255, 255))
+		self.level_manager.level.render(self.screen)
 		pygame.display.flip()
 
 	def handle_events(self):
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				sys.exit()
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				self.handle_mouse_pressed()
-			if event.type == pygame.MOUSEMOTION:
-				self.handle_mouse_motion()
-
-	def handle_mouse_pressed(self):
-		self.door.handle_mouse_pressed()
-
-	def handle_mouse_motion(self):
-		self.ball.handle_mouse_motion(pygame.mouse.get_pos())
+		if pygame.event.get(pygame.QUIT):
+			sys.exit()
+		self.level_manager.level.handle_events(pygame.event.get())
 
 
 if __name__ == "__main__":
