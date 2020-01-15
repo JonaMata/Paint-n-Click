@@ -6,7 +6,6 @@ from sprites.door import Door
 class Level:
 	def __init__(self, size, manager):
 		self.colors = {
-			"background": (255, 255, 255),
 			"white": (255, 255, 255),
 			"black": (0, 0, 0),
 			"green": (0, 255, 0)
@@ -32,15 +31,14 @@ class Level:
 
 class LevelManager:
 	def __init__(self, size):
-		self.levels = []
-		for level in Level.__subclasses__():
-			self.levels.append(level(size, self))
-
-		self.level = self.levels[0]
+		self.size = size
+		self.levels = Level.__subclasses__()
+		self.level = None
+		self.go_to(0)
 
 	def go_to(self, level):
-		print("going to level: {}".format(level))
-		self.level = self.levels[level]
+		print("going to level {}".format(level))
+		self.level = self.levels[level](self.size, self)
 
 
 class LevelZero(Level):

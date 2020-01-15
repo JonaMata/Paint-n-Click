@@ -9,14 +9,12 @@ class Game:
 		self.size = (500, 500)
 		self.screen = pygame.display.set_mode(self.size, pygame.RESIZABLE)
 
-		# initialize time variables
 		self.time = pygame.time.get_ticks()
 		self.dt = 0
 
 		self.level_manager = LevelManager(self.size)
 
 	def game_loop(self):
-		# set delta time
 		current_time = pygame.time.get_ticks()
 		self.dt = current_time - self.time
 		self.time = current_time
