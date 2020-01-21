@@ -11,9 +11,10 @@ while True:
 	crop_frame = frame[y1:y2, x1:x2]
 	gray_frame = cv2.cvtColor(crop_frame, cv2.COLOR_BGR2GRAY)
 	resized_frame = cv2.resize(gray_frame, (28, 28), cv2.INTER_CUBIC)
+	preview_frame = cv2.resize(resized_frame, (200, 200), cv2.INTER_NEAREST)
 
 	cv2.imshow('cropped', crop_frame)
-	cv2.imshow('compressed', resized_frame)
+	cv2.imshow('compressed', preview_frame)
 
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
