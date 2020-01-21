@@ -6,12 +6,16 @@ cap = cv2.VideoCapture(0)
 
 while True:
 	ret, frame = cap.read()
+
 	width, height = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 	size_diff = int((width - height)/2)
 	y1, y2, x1, x2 = 0, height, size_diff, width-size_diff
+
 	crop_frame = frame[y1:y2, x1:x2]
 	gray_frame = cv2.cvtColor(crop_frame, cv2.COLOR_BGR2GRAY)
-	resized_frame = cv2.resize(gray_frame, (28, 28), cv2.INTER_NEAREST)
+	kernel = np.ones((8, 8), np.uint8)
+	dilated_frame = cv2.erode(gray_frame, kernel)
+	resized_frame = cv2.resize(dilated_frame, (28, 28), cv2.INTER_NEAREST)
 	preview_frame = cv2.resize(resized_frame, (200, 200), cv2.INTER_NEAREST)
 	prediction = predict_drawing(resized_frame)
 
