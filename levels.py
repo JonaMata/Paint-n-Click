@@ -1,10 +1,11 @@
 import pygame
 from sprites.ball import Ball
 from sprites.door import Door
+from DrawingCamera import DrawingCamera
 
 
 class Level:
-	def __init__(self, size, manager):
+	def __init__(self, size, manager, drawing_camera):
 		self.colors = {
 			"white": (255, 255, 255),
 			"black": (0, 0, 0),
@@ -19,10 +20,13 @@ class Level:
 			self.door
 		))
 
+		self.drawing_camera = drawing_camera
+
 	def render(self, screen):
 		self.sprite_list.draw(screen)
 
 	def update(self, dt):
+		self.drawing_camera.update()
 		self.sprite_list.update(dt)
 
 	def handle_events(self, events):
@@ -34,11 +38,12 @@ class LevelManager:
 		self.size = size
 		self.levels = Level.__subclasses__()
 		self.level = None
+		self.drawing_camera = DrawingCamera()
 		self.go_to(0)
 
 	def go_to(self, level):
 		print("going to level {}".format(level))
-		self.level = self.levels[level](self.size, self)
+		self.level = self.levels[level](self.size, self, self.drawing_camera)
 
 
 class LevelZero(Level):
