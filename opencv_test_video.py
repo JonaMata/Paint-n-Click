@@ -7,9 +7,9 @@ cap = cv2.VideoCapture(0)
 while True:
 	ret, frame = cap.read()
 
-	width, height = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-	size_diff = int((width - height)/2)
-	y1, y2, x1, x2 = 0, height, size_diff, width-size_diff
+	width, height = cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+	size_diff = (width - height) // 2
+	y1, y2, x1, x2 = 0, height, size_diff, width - size_diff
 
 	crop_frame = frame[y1:y2, x1:x2]
 	gray_frame = cv2.cvtColor(crop_frame, cv2.COLOR_BGR2GRAY)
@@ -19,7 +19,7 @@ while True:
 	preview_frame = cv2.resize(resized_frame, (200, 200), cv2.INTER_NEAREST)
 	prediction = predict_drawing(resized_frame)
 
-	cv2.putText(crop_frame, 'Prediction: '+', '.join(np.flip(prediction)),
+	cv2.putText(crop_frame, 'Prediction: ' + ', '.join(np.flip(prediction)),
 				(0, 20),
 				cv2.FONT_HERSHEY_SIMPLEX,
 				0.5,
