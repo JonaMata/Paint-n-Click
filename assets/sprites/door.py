@@ -6,8 +6,8 @@ class Door(pygame.sprite.Sprite):
 	def __init__(self, pos, size):
 		super().__init__()
 		self.images = (
-			pygame.transform.scale(pygame.image.load("sprites/png/door.png"), (size, size)),
-			pygame.transform.scale(pygame.image.load("sprites/png/door_open.png"), (size, size))
+			pygame.transform.scale(pygame.image.load("assets/png/door.png"), (size, size)),
+			pygame.transform.scale(pygame.image.load("assets/png/door_open.png"), (size, size))
 		)
 		self.image = self.images[0]
 		self.rect = self.image.get_rect(center=(size / 2, size / 2))
