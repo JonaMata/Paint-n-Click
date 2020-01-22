@@ -1,5 +1,5 @@
 from assets.sprites.door import Door
-from assets.sprites.solutions import Solution
+from assets.sprites.image import Image
 from drawing_camera import DrawingCamera
 from text import Text
 import pygame
@@ -13,7 +13,7 @@ class Level:
 			"green": (0, 255, 0)
 		}
 
-		self.screen_center = (size[0]//2, size[1]//2)
+		self.screen_center = (size[0] // 2, size[1] // 2)
 		self.door = Door(self.screen_center, 100)
 		self.manager = manager
 		self.is_completed = False
@@ -52,7 +52,14 @@ class Level:
 				self.complete()
 
 	def handle_events(self, events):
-		pass
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				self.check_solution(self.solution)
+			if event.type == pygame.KEYDOWN:
+				try:
+					self.manager.go_to(int(event.unicode))
+				except:
+					print("input is not correct")
 
 	def complete(self):
 		self.is_completed = True
@@ -83,10 +90,10 @@ class LevelZero(Level):
 	def __init__(self, size, manager, drawing_camera, end_counter):
 		super(LevelZero, self).__init__(size, manager, drawing_camera, end_counter)
 		self.text = {
-			Text("Paint 'n Click", (self.screen_center[0], self.screen_center[1]-100), 'large'),
-			Text("Draw the right solution and", (self.screen_center[0], self.screen_center[1]+80), 'medium'),
+			Text("Paint 'n Click", (self.screen_center[0], self.screen_center[1] - 100), 'large'),
+			Text("Draw the right solution and", (self.screen_center[0], self.screen_center[1] + 80), 'medium'),
 			Text("capture it with you webcam", (self.screen_center[0], self.screen_center[1] + 110), 'medium'),
-			Text("click to continue!", (self.screen_center[0], self.screen_center[1]+150), 'small')
+			Text("click to continue!", (self.screen_center[0], self.screen_center[1] + 150), 'small')
 		}
 		self.sprite_list.add((
 			self.door
@@ -96,11 +103,6 @@ class LevelZero(Level):
 		super().render(screen)
 		for text in self.text:
 			text.render(screen)
-
-	def handle_events(self, events):
-		for event in events:
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				self.complete()
 
 	def complete(self):
 		super().complete()
@@ -112,15 +114,10 @@ class LevelOne(Level):
 		super(LevelOne, self).__init__(size, manager, drawing_camera, end_counter)
 		self.question = Text("Door = Locked", (self.screen_center[0], 50), 'medium')
 		self.solution = "key"
-		self.solution_sprite = Solution("assets/png/key.png", (self.screen_center[0], 130), 100)
+		self.solution_sprite = Image("assets/png/key.png", (self.screen_center[0], 130), 100)
 		self.sprite_list.add((
 			self.door
 		))
-
-	def handle_events(self, events):
-		for event in events:
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				self.check_solution("key")
 
 	def complete(self):
 		super().complete()
@@ -131,10 +128,20 @@ class LevelTwo(Level):
 	def __init__(self, size, manager, drawing_camera, end_counter):
 		super(LevelTwo, self).__init__(size, manager, drawing_camera, end_counter)
 		self.question = Text("Can you help me get home?", (self.screen_center[0], 50), 'medium')
-		self.solution = "key"
-		self.solution_sprite = Solution("assets/png/key.png", (self.screen_center[0], 130), 100)
+		self.sprite_list.add(Image("assets/png/person.png", self.screen_center, 80))
+		self.solution = "car"
+		self.solution_sprite = Image("assets/png/car.png", (self.screen_center[0], 130), 100)
+
+
+class LevelThree(Level):
+	def __init__(self, size, manager, drawing_camera, end_counter):
+		super(LevelThree, self).__init__(size, manager, drawing_camera, end_counter)
+		self.question = Text("Where do apples grow?", (self.screen_center[0], 50), 'medium')
+		self.sprite_list.add(Image("assets/png/apple.png", self.screen_center, 80))
+		self.solution = "tree"
+		self.solution_sprite = Image("assets/png/tree.png", (self.screen_center[0], 130), 120)
 
 	def handle_events(self, events):
 		for event in events:
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				self.check_solution("car")
+				self.check_solution("tree")

@@ -1,7 +1,7 @@
 import pygame
 
 
-class Solution(pygame.sprite.Sprite):
+class Image(pygame.sprite.Sprite):
 	def __init__(self, image_path, pos, size):
 		super().__init__()
 		self.image = pygame.transform.scale(pygame.image.load(image_path), (size, size))
