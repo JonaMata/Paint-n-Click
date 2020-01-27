@@ -1,6 +1,4 @@
 from tensorflow import keras
-import tensorflow_datasets as tfds
-import cv2
 import numpy as np
 
 used_labels = [
