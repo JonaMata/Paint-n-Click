@@ -25,5 +25,5 @@ The objective of the game is to answer the questions or riddles to be able to co
 ![](assets/gif/capture_intro.gif)
 
 To recognize doodles drawn by the player a TensorFlow model is trained a visualization of the different layers can be seen bellow.
-The code to train the model can be found in [train_model.py](train_model.py).
+The code to train the model can be found in [train_model.py](tensorflow_files/train_model.py).
 ![](assets/png/tensorflow_model.png)

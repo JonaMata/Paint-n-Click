@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-# from predictor import predict_drawing
+from tensorflow_files.predictor import predict_drawing
 
 
 class DrawingCamera:
@@ -23,7 +23,7 @@ class DrawingCamera:
 		resized_frame = cv2.resize(dilated_frame, (28, 28), cv2.INTER_NEAREST)
 		preview_frame = cv2.resize(resized_frame, (200, 200), cv2.INTER_NEAREST)
 
-		# self.prediction = predict_drawing(resized_frame)
+		self.prediction = predict_drawing(resized_frame)
 		self.prediction = " "
 		self.frame = crop_frame
 		cv2.imshow("input preview", preview_frame)
@@ -32,6 +32,7 @@ class DrawingCamera:
 		return self.frame
 
 	def get_prediction(self):
+		print(self.prediction)
 		return self.prediction
 
 	def release(self):
