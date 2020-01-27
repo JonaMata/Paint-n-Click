@@ -25,7 +25,7 @@ used_labels = [
         'star'
     ]
 
-model = keras.models.load_model('quickdraw_model_new_new.h5')
+model = keras.models.load_model('tensorflow_files/quickdraw_model_new_new.h5')
 
 
 def predict_drawing(image):
