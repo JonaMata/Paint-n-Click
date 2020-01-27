@@ -19,11 +19,11 @@ kernel = np.ones((8, 8), np.uint8)
 dilated_frame = cv2.erode(gray_frame, kernel)
 resized_frame = cv2.resize(dilated_frame, (28, 28), cv2.INTER_NEAREST)
 ```
-![](assets/gif/capture_cat.gif)
+![](assets/README/capture_cat.gif)
 
 The objective of the game is to answer the questions or riddles to be able to continue to the next level  
-![](assets/gif/capture_intro.gif)
+![](assets/README/capture_intro.gif)
 
 To recognize doodles drawn by the player a TensorFlow model is trained a visualization of the different layers can be seen bellow.
 The code to train the model can be found in [train_model.py](tensorflow_files/train_model.py).
-![](assets/png/tensorflow_model.png)
+![](assets/README/tensorflow_model.png)

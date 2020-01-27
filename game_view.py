@@ -1,7 +1,6 @@
 import sys
-import time
 import pygame
-from levels import LevelManager
+from screens import ScreenManager
 
 
 class Game:
@@ -13,7 +12,7 @@ class Game:
 		self.time = pygame.time.get_ticks()
 		self.dt = 0
 
-		self.level_manager = LevelManager(self.size)
+		self.screen_manager = ScreenManager(self.size)
 
 	def game_loop(self):
 		current_time = pygame.time.get_ticks()
@@ -25,17 +24,17 @@ class Game:
 		self.render()
 
 	def update(self, dt):
-		self.level_manager.level.update(dt)
+		self.screen_manager.current_screen.update(dt)
 
 	def render(self):
-		self.level_manager.level.render(self.screen)
+		self.screen_manager.current_screen.render(self.screen)
 		pygame.display.flip()
 
 	def handle_events(self):
 		if pygame.event.get(pygame.QUIT):
-			self.level_manager.drawing_camera.release()
+			self.screen_manager.drawing_camera.release()
 			sys.exit()
-		self.level_manager.level.handle_events(pygame.event.get())
+		self.screen_manager.current_screen.handle_events(pygame.event.get())
 
 
 if __name__ == "__main__":

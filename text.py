@@ -10,10 +10,8 @@ class Text:
 		}
 		self.size = size
 		self.color = color
-
 		self.surface = self.fonts[size].render(text, True, color)
 		self.rect = self.surface.get_rect()
-
 		self.rect.x = pos[0]
 		self.rect.y = pos[1]
 
