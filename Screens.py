@@ -7,7 +7,7 @@ from Text import Text
 import pygame
 
 
-class Screen:
+class Screen(object):
 	def __init__(self, size, manager, drawing_camera):
 		self.colors = {
 			"white": (255, 255, 255),
@@ -40,7 +40,7 @@ class Screen:
 		pass
 
 
-class ScreenManager:
+class ScreenManager(object):
 	def __init__(self, size):
 		self.size = size
 		self.drawing_camera = DrawingCamera()
@@ -83,14 +83,15 @@ class IntroScreen(Screen):
 class MazeScreen(Screen):
 	def __init__(self, size, manager, drawing_camera):
 		super().__init__(size, manager, drawing_camera)
-		self.character = Character((0, 24), 3)
-		self.maze = Maze(size[0]//10, size[1]//10)
+		self.maze = Maze(20, 20, size)
+		self.character = Character((0, 24), self.maze.tile_scale, 3)
 		self.colors["background"] = (33, 30, 39)
 		self.next_screen = self.manager.screens[2]
 		self.screen_name = "Maze"
 
 	def render(self, screen):
 		super().render(screen)
+		self.maze.render(screen)
 		self.character.render(screen)
 
 	def handle_events(self, events):

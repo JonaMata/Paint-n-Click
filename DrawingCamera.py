@@ -3,7 +3,7 @@ import cv2
 from tensorflow_files.predictor import predict_drawing
 
 
-class DrawingCamera:
+class DrawingCamera(object):
 	def __init__(self):
 		self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 		width, height = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))

@@ -1,7 +1,7 @@
 import random
 
 
-class Riddle:
+class Riddle(object):
     def __init__(self):
         possible_riddles = [
             ('riddle', 'answer')

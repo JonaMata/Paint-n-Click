@@ -3,10 +3,10 @@ import pygame
 from Screens import ScreenManager
 
 
-class Game:
+class Game(object):
 	def __init__(self):
 		pygame.init()
-		self.size = (500, 500)
+		self.size = (640, 640)
 		self.screen = pygame.display.set_mode(self.size)
 
 		self.time = pygame.time.get_ticks()

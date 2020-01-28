@@ -1,8 +1,8 @@
 from Spritesheet import *
 
 
-class Character:
-    def __init__(self, pos, animation_speed):
+class Character(object):
+    def __init__(self, pos, tile_scale, animation_speed):
         # Character from https://0x72.itch.io/dungeontileset-ii
         spritesheet = SpriteSheet("assets/png/character.png")
         self.is_running = False
@@ -11,16 +11,16 @@ class Character:
         self.flipped = True
         self.pos = pos
         self.idle = [
-            Sprite(spritesheet, (0, 0, 16, 27)),
-            Sprite(spritesheet, (16, 0, 16, 27)),
-            Sprite(spritesheet, (32, 0, 16, 27)),
-            Sprite(spritesheet, (48, 0, 16, 27)),
+            Sprite(spritesheet, (0, 0, 16, 27), scale=tile_scale),
+            Sprite(spritesheet, (16, 0, 16, 27), scale=tile_scale),
+            Sprite(spritesheet, (32, 0, 16, 27), scale=tile_scale),
+            Sprite(spritesheet, (48, 0, 16, 27), scale=tile_scale),
         ]
         self.running = [
-            Sprite(spritesheet, (64, 0, 16, 27)),
-            Sprite(spritesheet, (80, 0, 16, 27)),
-            Sprite(spritesheet, (96, 0, 16, 27)),
-            Sprite(spritesheet, (112, 0, 16, 27)),
+            Sprite(spritesheet, (64, 0, 16, 27), scale=tile_scale),
+            Sprite(spritesheet, (80, 0, 16, 27), scale=tile_scale),
+            Sprite(spritesheet, (96, 0, 16, 27), scale=tile_scale),
+            Sprite(spritesheet, (112, 0, 16, 27), scale=tile_scale),
         ]
 
     def render(self, screen):

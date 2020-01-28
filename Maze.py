@@ -3,8 +3,8 @@ from Spritesheet import *
 import random
 
 
-class Maze:
-    def __init__(self, width, height):
+class Maze(object):
+    def __init__(self, width, height, size):
         if width % 2 is 0:
             width += 1
         if height % 2 is 0:
@@ -13,17 +13,19 @@ class Maze:
         # Tilemap heavily inspired by "Dungeon Tilemap" by Michele Bucelli https://opengameart.org/users/buch?page=2
         spritesheet = SpriteSheet("assets/png/tilemap.png")
         self.sprites = {
-            "Floor": Sprite(spritesheet, (64, 48, 16, 16)),
-            "Wall": Sprite(spritesheet, (48, 48, 16, 16))
+            Tile.TYPE_WALL: spritesheet.image_at((64, 48, 16, 16)),
+            Tile.TYPE_EMPTY: spritesheet.image_at((48, 48, 16, 16))
         }
         self.maze_sprite_list = pygame.sprite.Group()
         self.width = width
         self.height = height
-        self.grid = [[Tile(x, y, Tile.TYPE_WALL, self.sprites["Wall"]) for y in range(height)] for x in range(width)]
+        self.tile_scale = (size[0] / width / 16)
+        self.grid = [[Tile(x, y, Tile.TYPE_WALL, spritesheet, self.maze_sprite_list, self.tile_scale) for y in range(self.height)] for x in range(self.width)]
         self.start = (2*int(random.uniform(0, self.width//2))+1, 0)
         self.end = (2*int(random.uniform(0, self.width//2))+1, height-1)
         self.set_neighbours()
         self.generate_maze()
+        self.render_console()
 
     def set_neighbours(self):
         for x in range(1, self.width, 2):
@@ -39,7 +41,7 @@ class Maze:
                     grid_tile.neighbours['left'] = (self.grid[x-1][y], self.grid[x-2][y])
 
     def generate_maze(self):
-        self.grid[self.start[0]][self.start[1]].set_type(Tile.TYPE_EMPTY)
+        self.grid[self.start[0]][self.start[1]].update_type(Tile.TYPE_EMPTY)
         neighbours = self.grid[self.start[0]][1].possible_neighbours()
         random.shuffle(neighbours)
         for neighbour in neighbours:
@@ -47,8 +49,8 @@ class Maze:
                 self.do_step(neighbour)
 
     def do_step(self, tile):
-        tile[0].set_type(Tile.TYPE_EMPTY, self.sprites["Floor"])
-        tile[1].set_type(Tile.TYPE_EMPTY, self.sprites["Floor"])
+        tile[0].update_type(Tile.TYPE_EMPTY)
+        tile[1].update_type(Tile.TYPE_EMPTY)
         neighbours = tile[1].possible_neighbours()
         random.shuffle(neighbours)
         if len(neighbours) is 0:
@@ -57,5 +59,8 @@ class Maze:
             if neighbour[1].tile_type is Tile.TYPE_WALL:
                 self.do_step(neighbour)
 
-    def print_grid(self):
+    def render_console(self):
         print('\n'.join(''.join(str(tile.tile_type) for tile in row) for row in self.grid))
+
+    def render(self, screen):
+        self.maze_sprite_list.draw(screen)
