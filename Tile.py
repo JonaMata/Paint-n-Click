@@ -18,7 +18,7 @@ class Tile:
     def possible_neighbours(self):
         possible = []
         for neighbour in self.neighbours.values():
-            if neighbour.tile_type is self.TYPE_WALL:
+            if neighbour[1].tile_type is self.TYPE_WALL:
                 possible.append(neighbour)
         return possible
 
