@@ -1,6 +1,6 @@
 import sys
 import pygame
-from screens import ScreenManager
+from Screens import ScreenManager
 
 
 class Game:

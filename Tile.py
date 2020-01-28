@@ -6,9 +6,11 @@ class Tile:
     TYPE_WALL = '#'
     TYPE_DOOR = '|'
 
-    def __init__(self, x, y, tile_type):
+    def __init__(self, x, y, tile_type, sprite):
         self.x = x
         self.y = y
+        self.sprite = sprite
+        self.sprite.set_pos((x, y))
         self.tile_type = tile_type
         self.neighbours = {}
 

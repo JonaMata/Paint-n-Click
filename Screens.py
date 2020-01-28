@@ -1,7 +1,9 @@
-from spritesheet_handler import *
-from door import Door
-from drawing_camera import DrawingCamera
-from text import Text
+from Spritesheet import *
+from Door import Door
+from Character import Character
+from Maze import Maze
+from DrawingCamera import DrawingCamera
+from Text import Text
 import pygame
 
 
@@ -13,8 +15,7 @@ class Screen:
 			"background": (255, 255, 255)
 		}
 
-		# Tilemap heavily inspired by dungeon tilemap by Michele Bucelli https://opengameart.org/users/buch?page=2
-		# Character from https://0x72.itch.io/dungeontileset-ii
+		# Tilemap heavily inspired by "Dungeon Tilemap" by Michele Bucelli https://opengameart.org/users/buch?page=2
 		self.spritesheet = SpriteSheet("assets/png/tilemap.png")
 		self.screen_name = "Unnamed Screen"
 		self.screen_center = (size[0] // 2, size[1] // 2)
@@ -44,7 +45,7 @@ class ScreenManager:
 		self.size = size
 		self.drawing_camera = DrawingCamera()
 		self.screens = Screen.__subclasses__()
-		self.initial_screen = self.screens[0]
+		self.initial_screen = self.screens[1]
 		self.current_screen = self.initial_screen(self.size, self, self.drawing_camera)
 
 	def next(self):
@@ -82,16 +83,15 @@ class IntroScreen(Screen):
 class MazeScreen(Screen):
 	def __init__(self, size, manager, drawing_camera):
 		super().__init__(size, manager, drawing_camera)
+		self.character = Character((0, 24), 3)
+		self.maze = Maze(size[0]//10, size[1]//10)
 		self.colors["background"] = (33, 30, 39)
 		self.next_screen = self.manager.screens[2]
 		self.screen_name = "Maze"
-		self.sprite_list.add(
-			Sprite(self.spritesheet, (0, 0), (0, 0, 16, 16)),
-			Sprite(self.spritesheet, (0, 64), (0, 16, 16, 16)),
-			Sprite(self.spritesheet, (64, 0), (16, 0, 16, 16)),
-			Sprite(self.spritesheet, (64, 64), (16, 16, 16, 16)),
-			Sprite(self.spritesheet, (0, 128), (16, 16, 16, 16)),
-		)
+
+	def render(self, screen):
+		super().render(screen)
+		self.character.render(screen)
 
 	def handle_events(self, events):
 		for event in events:

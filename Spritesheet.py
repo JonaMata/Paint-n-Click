@@ -39,11 +39,20 @@ class SpriteSheet(object):
 # Note: load_pos should be in the form of:
 # (x, y, x_offset, y_offset)
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, spritesheet, pos, load_pos, rotation=0, scale=4, colorkey=(0, 255, 0)):
+    def __init__(self, spritesheet, load_pos, pos=(0, 0), rotation=0, scale=4, flip=None, colorkey=(0, 255, 0)):
         super().__init__()
         self.image = spritesheet.image_at(load_pos, colorkey)
-        self.image = pygame.transform.rotate(self.image, rotation*90)
-        self.image = pygame.transform.scale(self.image, (load_pos[2]*scale, load_pos[3]*scale))
+        if rotation > 0:
+            self.image = pygame.transform.rotate(self.image, rotation*90)
+        if scale > 1:
+            self.image = pygame.transform.scale(self.image, (load_pos[2]*scale, load_pos[3]*scale))
+        if flip:
+            self.image = pygame.transform.flip(self.image, flip[0], flip[1])
+
         self.rect = self.image.get_rect(center=(load_pos[2]*scale//2, load_pos[3]*scale//2))
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+    def set_pos(self, pos):
         self.rect.x = pos[0]
         self.rect.y = pos[1]

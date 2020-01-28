@@ -1,4 +1,5 @@
 from Tile import Tile
+from Spritesheet import *
 import random
 
 
@@ -9,9 +10,16 @@ class Maze:
         if height % 2 is 0:
             height += 1
 
+        # Tilemap heavily inspired by "Dungeon Tilemap" by Michele Bucelli https://opengameart.org/users/buch?page=2
+        spritesheet = SpriteSheet("assets/png/tilemap.png")
+        self.sprites = {
+            "Floor": Sprite(spritesheet, (64, 48, 16, 16)),
+            "Wall": Sprite(spritesheet, (48, 48, 16, 16))
+        }
+        self.maze_sprite_list = pygame.sprite.Group()
         self.width = width
         self.height = height
-        self.grid = [[Tile(x, y, Tile.TYPE_WALL) for y in range(height)] for x in range(width)]
+        self.grid = [[Tile(x, y, Tile.TYPE_WALL, self.sprites["Wall"]) for y in range(height)] for x in range(width)]
         self.start = (2*int(random.uniform(0, self.width//2))+1, 0)
         self.end = (2*int(random.uniform(0, self.width//2))+1, height-1)
         self.set_neighbours()
@@ -39,8 +47,8 @@ class Maze:
                 self.do_step(neighbour)
 
     def do_step(self, tile):
-        tile[0].set_type(Tile.TYPE_EMPTY)
-        tile[1].set_type(Tile.TYPE_EMPTY)
+        tile[0].set_type(Tile.TYPE_EMPTY, self.sprites["Floor"])
+        tile[1].set_type(Tile.TYPE_EMPTY, self.sprites["Floor"])
         neighbours = tile[1].possible_neighbours()
         random.shuffle(neighbours)
         if len(neighbours) is 0:

@@ -14,7 +14,7 @@ The objective of the game is to answer riddles to be able to proceed through a r
 ![](assets/README/capture_intro.gif)
 
 For the input of the model we use OpenCV to resize a webcam input to 28x28 grayscale.
-as you can see in [drawing_camera.py](drawing_camera.py)
+as you can see in [drawing_camera.py](DrawingCamera.py)
 ```
 crop_frame = frame[self.y1:self.y2, self.x1:self.x2]
 gray_frame = cv2.cvtColor(crop_frame, cv2.COLOR_BGR2GRAY)
