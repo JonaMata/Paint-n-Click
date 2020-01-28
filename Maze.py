@@ -15,6 +15,7 @@ class Maze:
         self.start = (2*int(random.uniform(0, self.width//2))+1, 0)
         self.end = (2*int(random.uniform(0, self.width//2))+1, height-1)
         self.set_neighbours()
+        self.generate_maze()
 
     def set_neighbours(self):
         for x in range(1, self.width, 2):
