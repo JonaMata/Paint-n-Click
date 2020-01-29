@@ -1,20 +1,31 @@
-import pygame
-import pygame.gfxdraw
+from Spritesheet import Sprite
+from Riddle import Riddle
 
 
-class Door(pygame.sprite.Sprite):
-	def __init__(self, pos, size):
-		super().__init__()
-		self.images = (
-			pygame.transform.scale(pygame.image.load("assets/png/door.png"), (size, size)),
-			pygame.transform.scale(pygame.image.load("assets/png/door_open.png"), (size, size))
-		)
-		self.image = self.images[0]
-		self.rect = self.image.get_rect(center=(size / 2, size / 2))
-		self.rect.x = pos[0]-size/2
-		self.rect.y = pos[1]-size/2
-		self.is_open = False
+class Door(Sprite):
+    def __init__(self, spritesheet, load_pos=(0, 32, 16, 26), pos=(0, 0), rotation=0, scale=4, flip=None,
+                 colorkey=(0, 255, 0)):
+        super().__init__(spritesheet, load_pos, pos, rotation, scale, flip, colorkey)
+        self.is_open = False
+        self.riddle = Riddle()
+        self.scale = scale
+        self.collided = False
 
-	def open(self):
-		self.image = self.images[1]
-		self.is_open = True
+    def render_riddle(self, screen):
+        if self.collided is True:
+            self.riddle.render(screen)
+        self.collided = False
+
+    def open(self):
+        self.is_open = True
+        self.kill()
+
+    def set_pos(self, pos):
+        self.rect.x = pos[0]
+        self.rect.y = pos[1] - self.scale*10
+
+    def collide(self):
+        self.collided = True
+
+
+

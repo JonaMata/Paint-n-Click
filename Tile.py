@@ -1,5 +1,6 @@
 from Riddle import Riddle
 from Spritesheet import Sprite
+from Door import Door
 
 
 class Tile(object):
@@ -14,9 +15,10 @@ class Tile(object):
     DIRECTION_DOWN = 2
     DIRECTION_LEFT = 1
 
-    def __init__(self, x, y, spritesheet, sprite_group, tile_scale):
+    def __init__(self, x, y, spritesheet, maze_sprite_group, void_sprite_group, door_sprite_group, tile_scale):
         self.pillar_sprite = Sprite(spritesheet, (32, 16, 16, 16), scale=tile_scale)
-        self.door_sprite = Sprite(spritesheet, (0, 32, 16, 16), scale=tile_scale)
+        self.door_sprite = Door(spritesheet, (0, 32, 16, 26), scale=tile_scale)
+        self.void_sprite = Sprite(spritesheet, (48, 64, 16, 16), scale=tile_scale)
         self.floor_sprites = {
             0: Sprite(spritesheet, (32, 0, 16, 16), scale=tile_scale),
             1: Sprite(spritesheet, (0, 16, 16, 16), scale=tile_scale),
@@ -29,8 +31,11 @@ class Tile(object):
         }
         self.x = x
         self.y = y
-        self.sprite_group = sprite_group
+        self.maze_sprite_group = maze_sprite_group
+        self.void_sprite_group = void_sprite_group
+        self.door_sprite_group = door_sprite_group
         self.tile_type = self.TYPE_VOID
+        self.tile_size = tile_scale*16
         self.sprite = None
         self.step_neighbours = {}
         self.direct_neighbours = {}
@@ -54,9 +59,9 @@ class Tile(object):
         # Set correct sprites for floor tiles
         if self.tile_type is self.TYPE_FLOOR:
             floor_neighbours_keys = self.floor_neighbours().keys()
-
-            floor_amount = len(floor_neighbours_keys)
-            floor_direction = min(floor_neighbours_keys)
+            if floor_neighbours_keys:
+                floor_amount = len(floor_neighbours_keys)
+                floor_direction = min(floor_neighbours_keys)
 
             if floor_amount is 2:
                 if sum(floor_neighbours_keys) % 2 is 0:
@@ -78,8 +83,11 @@ class Tile(object):
 
         # Set correct sprites for void tiles (to be implemented)
         elif self.tile_type is self.TYPE_VOID:
-            if self.DIRECTION_UP in self.direct_neighbours and self.direct_neighbours[self.DIRECTION_UP].tile_type is self.TYPE_FLOOR:
+            if self.DIRECTION_UP in self.direct_neighbours and self.direct_neighbours[self.DIRECTION_UP].tile_type in (self.TYPE_FLOOR, self.TYPE_DOOR):
                 self.sprite = self.pillar_sprite
+            else:
+                self.sprite = self.void_sprite
+            self.sprite.add(self.void_sprite_group)
 
         # Set correct sprites for start and end tile
         elif self.tile_type in (self.TYPE_START, self.TYPE_END):
@@ -90,8 +98,11 @@ class Tile(object):
             self.sprite = self.door_sprite
 
         if self.sprite:
-            self.sprite.set_pos((self.x * self.sprite.size[0], self.y * self.sprite.size[1]))
-            self.sprite.add(self.sprite_group)
+            self.sprite.set_pos((self.x * self.tile_size, self.y * self.tile_size))
+            if self.tile_type == self.TYPE_DOOR:
+                self.sprite.add(self.door_sprite_group)
+            else:
+                self.sprite.add(self.maze_sprite_group)
 
     def floor_neighbours(self):
         floor_neighbours = {}

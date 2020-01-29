@@ -1,27 +1,38 @@
 from Spritesheet import *
 
 
-class Character(object):
-    def __init__(self, pos, tile_scale, animation_speed):
+class Character(pygame.sprite.Sprite):
+    def __init__(self, pos, tile_scale, animation_speed, speed=2, colorkey=(0, 255, 0)):
+        super().__init__()
         # Character from https://0x72.itch.io/dungeontileset-ii
         spritesheet = SpriteSheet("assets/png/character.png")
-        self.is_running = False
-        self.frame = 0
-        self.animation_speed = animation_speed
-        self.flipped = True
-        self.pos = pos
+        sprite_size = (16, 22)
         self.idle = [
-            Sprite(spritesheet, (0, 0, 16, 27), scale=tile_scale),
-            Sprite(spritesheet, (16, 0, 16, 27), scale=tile_scale),
-            Sprite(spritesheet, (32, 0, 16, 27), scale=tile_scale),
-            Sprite(spritesheet, (48, 0, 16, 27), scale=tile_scale),
+            spritesheet.image_at((0, 5, sprite_size[0], sprite_size[1]), colorkey),
+            spritesheet.image_at((16, 5, sprite_size[0], sprite_size[1]), colorkey),
+            spritesheet.image_at((32, 5, sprite_size[0], sprite_size[1]), colorkey),
+            spritesheet.image_at((48, 5, sprite_size[0], sprite_size[1]), colorkey),
         ]
         self.running = [
-            Sprite(spritesheet, (64, 0, 16, 27), scale=tile_scale),
-            Sprite(spritesheet, (80, 0, 16, 27), scale=tile_scale),
-            Sprite(spritesheet, (96, 0, 16, 27), scale=tile_scale),
-            Sprite(spritesheet, (112, 0, 16, 27), scale=tile_scale),
+            spritesheet.image_at((64, 5, sprite_size[0], sprite_size[1]), colorkey),
+            spritesheet.image_at((80, 5, sprite_size[0], sprite_size[1]), colorkey),
+            spritesheet.image_at((96, 5, sprite_size[0], sprite_size[1]), colorkey),
+            spritesheet.image_at((112, 5, sprite_size[0], sprite_size[1]), colorkey),
         ]
+
+        self.tile_scale = tile_scale
+        self.speed = speed
+        self.direction = (0, 0)
+        self.animation_speed = animation_speed
+        self.size = (int(sprite_size[0] * self.tile_scale), int(sprite_size[1] * self.tile_scale))
+        self.is_running = False
+        self.flipped = False
+        self.frame = 0
+        self.image = self.idle[self.frame]
+        self.rect = self.image.get_rect(center=(self.size[0] // 2, self.size[1] // 2))
+        self.hitbox = pygame.rect.Rect((0, 0), (1 * tile_scale, 1 * tile_scale), center=(self.size[0] // 2, self.size[1] // 2))
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
 
     def render(self, screen):
         if self.is_running:
@@ -33,11 +44,48 @@ class Character(object):
             self.frame = 0
 
         if self.flipped:
-            current_frame = pygame.transform.flip(current_animation[self.frame // self.animation_speed].image, 1, 0)
+            self.image = pygame.transform.flip(current_animation[self.frame // self.animation_speed], 1, 0)
         else:
-            current_frame = self.running[self.frame // self.animation_speed].image
+            self.image = current_animation[self.frame // self.animation_speed]
+
+        self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
+        screen.blit(self.image, self.rect)
         self.frame += 1
-        screen.blit(current_frame, self.pos)
 
+    def update(self):
+        if self.is_running:
+            self.rect.x += self.direction[0] * self.speed
+            self.hitbox.x = self.rect.x+self.size[0]//2
+            self.rect.y += self.direction[1] * self.speed
+            self.hitbox.y = self.rect.y+self.size[1]//2+5
 
+    def handle_input(self):
+        keys = pygame.key.get_pressed()
 
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.direction = (-1, 0)
+            self.flipped = True
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.direction = (1, 0)
+            self.flipped = False
+        elif keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.direction = (0, -1)
+        elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            self.direction = (0, 1)
+        else:
+            self.direction = (0, 0)
+
+        if self.direction[0] is not 0 or self.direction[1] is not 0:
+            self.is_running = True
+        else:
+            self.is_running = False
+
+    def collide(self, other):
+        if self.direction[0] > 0 and self.rect.x > other.rect.x:
+            self.rect.right = other.rect.left
+        elif self.direction[0] < 0 and self.rect.x < other.rect.x:
+            self.rect.left = other.rect.right
+        elif self.direction[1] > 0 and self.rect.y < other.rect.y:
+            self.rect.bottom = other.rect.top
+        elif self.direction[1] < 0 and self.rect.y > other.rect.y:
+            self.rect.top = other.rect.bottom

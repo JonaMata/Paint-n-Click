@@ -1,5 +1,5 @@
 from Spritesheet import *
-from Door import Door
+from DoorIntro import DoorIntro
 from Character import Character
 from Maze import Maze
 from DrawingCamera import DrawingCamera
@@ -64,12 +64,12 @@ class IntroScreen(Screen):
 			Text("capture it with you webcam", (self.screen_center[0], self.screen_center[1] + 110), 'medium'),
 			Text("click to continue!", (self.screen_center[0], self.screen_center[1] + 150), 'small')
 		}
-		self.door = Door(self.screen_center, 100)
-		self.sprite_list.add(self.door)
+		self.door_intro = DoorIntro(self.screen_center, 100)
+		self.sprite_list.add(self.door_intro)
 
 	def update(self, dt):
 		super().update(dt)
-		if self.door.is_open:
+		if self.door_intro.is_open:
 			self.timer += dt
 			if self.timer >= 1500:
 				self.manager.next()
@@ -77,16 +77,16 @@ class IntroScreen(Screen):
 	def handle_events(self, events):
 		for event in events:
 			if event.type is pygame.MOUSEBUTTONDOWN:
-				self.door.open()
+				self.door_intro.open()
 
 
 class MazeScreen(Screen):
 	def __init__(self, size, manager, drawing_camera):
 		super().__init__(size, manager, drawing_camera)
 		self.maze = Maze(20, 20, size)
-		self.character = Character((0, 24), self.maze.tile_scale, 3)
+		self.character = Character((self.maze.start.x*self.maze.tile_scale*16, 0), self.maze.tile_scale, 1, 6)
 		self.colors["background"] = (33, 30, 39)
-		self.next_screen = self.manager.screens[2]
+		self.next_screen = self.manager.screens[0]
 		self.screen_name = "Maze"
 
 	def render(self, screen):
@@ -94,19 +94,10 @@ class MazeScreen(Screen):
 		self.maze.render(screen)
 		self.character.render(screen)
 
-	def handle_events(self, events):
-		for event in events:
-			if event.type is pygame.MOUSEBUTTONDOWN:
-				self.manager.next()
-
-
-class OutroScreen(Screen):
-	def __init__(self, size, manager, drawing_camera):
-		super().__init__(size, manager, drawing_camera)
-		self.next_screen = self.manager.screens[0]
-		self.screen_name = "Outro"
+	def update(self, dt):
+		super().update(dt)
+		self.character.update()
+		self.maze.collision(self.character)
 
 	def handle_events(self, events):
-		for event in events:
-			if event.type is pygame.MOUSEBUTTONDOWN:
-				self.manager.next()
+		self.character.handle_input()

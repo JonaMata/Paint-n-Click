@@ -14,19 +14,18 @@ class Maze(object):
 
         # Tilemap heavily inspired by "Dungeon Tilemap" by Michele Bucelli https://opengameart.org/users/buch?page=2
         spritesheet = SpriteSheet("assets/png/tilemap.png")
-        self.sprites = {
-            Tile.TYPE_VOID: spritesheet.image_at((64, 48, 16, 16)),
-            Tile.TYPE_FLOOR: spritesheet.image_at((48, 48, 16, 16))
-        }
         self.maze_sprite_group = pygame.sprite.Group()
+        self.void_sprite_group = pygame.sprite.Group()
+        self.door_sprite_group = pygame.sprite.Group()
         self.width = width
         self.height = height
         self.tile_scale = (size[0] / width / 16)
-        self.grid = [[Tile(x, y, spritesheet, self.maze_sprite_group, self.tile_scale) for y in range(self.height)] for x in range(self.width)]
+        self.grid = [[Tile(x, y, spritesheet, self.maze_sprite_group, self.void_sprite_group, self.door_sprite_group, self.tile_scale) for y in range(self.height)] for x in range(self.width)]
         self.start = self.grid[2*int(random.uniform(0, self.width//2))+1][0]
         self.end = self.grid[2*int(random.uniform(0, self.width//2))+1][height-1]
         self.set_neighbours()
         self.generate_maze()
+
         path = self.find_best_path()
         while path is not None:
             path.remove(self.start)
@@ -34,6 +33,7 @@ class Maze(object):
             door_tile = path[int(random.uniform(0, len(path)))]
             door_tile.tile_type = Tile.TYPE_DOOR
             path = self.find_best_path()
+
         self.set_sprites()
         self.render_console()
 
@@ -109,6 +109,7 @@ class Maze(object):
         self.start.g_score = 0
         self.start.is_seen = True
         open_list = [self.start]
+        current_tile = None
 
         while len(open_list) > 0:
             current_tile = open_list.pop()
@@ -150,3 +151,14 @@ class Maze(object):
 
     def render(self, screen):
         self.maze_sprite_group.draw(screen)
+        self.door_sprite_group.draw(screen)
+        for door in self.door_sprite_group:
+            door.render_riddle(screen)
+
+    def collision(self, character):
+        collided_tiles = pygame.sprite.spritecollide(character, self.void_sprite_group, 0, collide_hitbox)
+        if collided_tiles:
+            character.collide(collided_tiles[-1])
+        collided_doors = pygame.sprite.spritecollide(character, self.door_sprite_group, 0, collide_hitbox)
+        if collided_doors:
+            collided_doors[-1].collide()
