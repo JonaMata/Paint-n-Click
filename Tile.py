@@ -10,18 +10,18 @@ class Tile(object):
     TYPE_END = 'E'
 
     DIRECTION_UP = 0
-    DIRECTION_RIGHT = 90
-    DIRECTION_DOWN = 180
-    DIRECTION_LEFT = 270
+    DIRECTION_RIGHT = 3
+    DIRECTION_DOWN = 2
+    DIRECTION_LEFT = 1
 
     def __init__(self, x, y, spritesheet, sprite_group, tile_scale):
-        self.wall_sprite = Sprite(spritesheet, (64, 48, 16, 16), scale=tile_scale)
+        self.pillar_sprite = Sprite(spritesheet, (32, 16, 16, 16), scale=tile_scale)
         self.floor_sprites = {
             0: Sprite(spritesheet, (32, 0, 16, 16), scale=tile_scale),
             1: Sprite(spritesheet, (0, 16, 16, 16), scale=tile_scale),
             2: {
                 0: Sprite(spritesheet, (16, 0, 16, 16), scale=tile_scale, rotation=1),
-                1: Sprite(spritesheet, (0, 0, 16, 16), scale=tile_scale, rotation=1)
+                1: Sprite(spritesheet, (0, 0, 16, 16), scale=tile_scale, rotation=2)
             },
             3: Sprite(spritesheet, (48, 0, 16, 16), scale=tile_scale, rotation=2),
             4: Sprite(spritesheet, (64, 0, 16, 16), scale=tile_scale)
@@ -54,14 +54,14 @@ class Tile(object):
             floor_direction = min(floor_neighbours_keys)
 
             if floor_amount is 2:
-                if sum(floor_neighbours_keys) % 180 is 0:
+                if sum(floor_neighbours_keys) % 2 is 0:
                     # Straight line floor
                     self.sprite = self.floor_sprites[2][0]
                 else:
                     # Corner floor
                     self.sprite = self.floor_sprites[2][1]
-                    if min(floor_neighbours_keys) == 0 and max(floor_neighbours_keys) == 270:
-                        floor_direction -= 90
+                    if min(floor_neighbours_keys) == 0 and max(floor_neighbours_keys) == 3:
+                        floor_direction -= 1
             else:
                 if floor_amount is 3:
                     for direction in (self.DIRECTION_UP, self.DIRECTION_RIGHT, self.DIRECTION_DOWN, self.DIRECTION_LEFT):
@@ -70,12 +70,16 @@ class Tile(object):
                 self.sprite = self.floor_sprites[floor_amount]
 
             self.sprite.rotate(floor_direction)
-            self.sprite.set_pos((self.x * self.sprite.size[0], self.y * self.sprite.size[1]))
-            self.sprite.add(self.sprite_group)
 
         # Set correct sprites for void tiles (to be implemented)
         elif self.tile_type is self.TYPE_VOID:
-            return
+            if self.DIRECTION_UP in self.direct_neighbours and self.direct_neighbours[self.DIRECTION_UP].tile_type is self.TYPE_FLOOR:
+                self.sprite = self.pillar_sprite
+
+        if self.sprite:
+            self.sprite.set_pos((self.x * self.sprite.size[0], self.y * self.sprite.size[1]))
+            self.sprite.add(self.sprite_group)
+
 
     def update_type(self, tile_type):
         self.tile_type = tile_type

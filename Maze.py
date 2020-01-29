@@ -16,11 +16,11 @@ class Maze(object):
             Tile.TYPE_VOID: spritesheet.image_at((64, 48, 16, 16)),
             Tile.TYPE_FLOOR: spritesheet.image_at((48, 48, 16, 16))
         }
-        self.maze_sprite_list = pygame.sprite.Group()
+        self.maze_sprite_group = pygame.sprite.Group()
         self.width = width
         self.height = height
         self.tile_scale = (size[0] / width / 16)
-        self.grid = [[Tile(x, y, spritesheet, self.maze_sprite_list, self.tile_scale) for y in range(self.height)] for x in range(self.width)]
+        self.grid = [[Tile(x, y, spritesheet, self.maze_sprite_group, self.tile_scale) for y in range(self.height)] for x in range(self.width)]
         self.start = (2*int(random.uniform(0, self.width//2))+1, 0)
         self.end = (2*int(random.uniform(0, self.width//2))+1, height-1)
         self.set_neighbours()
@@ -83,4 +83,4 @@ class Maze(object):
         print('\n'.join(''.join(str(tile.tile_type) for tile in row) for row in self.grid))
 
     def render(self, screen):
-        self.maze_sprite_list.draw(screen)
+        self.maze_sprite_group.draw(screen)

@@ -63,4 +63,4 @@ class Sprite(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
     def rotate(self, rotation):
-        self.image = pygame.transform.rotate(self.image, -rotation)
+        self.image = pygame.transform.rotate(self.image, 90*rotation)
