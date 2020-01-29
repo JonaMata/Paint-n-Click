@@ -61,3 +61,6 @@ class Sprite(pygame.sprite.Sprite):
     def set_pos(self, pos):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+
+    def rotate(self, rotation):
+        self.image = pygame.transform.rotate(self.image, -rotation)

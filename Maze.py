@@ -13,7 +13,7 @@ class Maze(object):
         # Tilemap heavily inspired by "Dungeon Tilemap" by Michele Bucelli https://opengameart.org/users/buch?page=2
         spritesheet = SpriteSheet("assets/png/tilemap.png")
         self.sprites = {
-            Tile.TYPE_WALL: spritesheet.image_at((64, 48, 16, 16)),
+            Tile.TYPE_VOID: spritesheet.image_at((64, 48, 16, 16)),
             Tile.TYPE_FLOOR: spritesheet.image_at((48, 48, 16, 16))
         }
         self.maze_sprite_list = pygame.sprite.Group()
@@ -60,7 +60,7 @@ class Maze(object):
         neighbours = self.grid[self.start[0]][1].possible_stop_neighbours()
         random.shuffle(neighbours)
         for neighbour in neighbours:
-            if neighbour[1].tile_type is Tile.TYPE_WALL:
+            if neighbour[1].tile_type is Tile.TYPE_VOID:
                 self.do_step(neighbour)
 
         # Set tile sprites
@@ -76,7 +76,7 @@ class Maze(object):
         if len(neighbours) is 0:
             return
         for neighbour in neighbours:
-            if neighbour[1].tile_type is Tile.TYPE_WALL:
+            if neighbour[1].tile_type is Tile.TYPE_VOID:
                 self.do_step(neighbour)
 
     def render_console(self):
