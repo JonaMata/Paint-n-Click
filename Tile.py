@@ -16,6 +16,7 @@ class Tile(object):
 
     def __init__(self, x, y, spritesheet, sprite_group, tile_scale):
         self.pillar_sprite = Sprite(spritesheet, (32, 16, 16, 16), scale=tile_scale)
+        self.door_sprite = Sprite(spritesheet, (0, 32, 16, 16), scale=tile_scale)
         self.floor_sprites = {
             0: Sprite(spritesheet, (32, 0, 16, 16), scale=tile_scale),
             1: Sprite(spritesheet, (0, 16, 16, 16), scale=tile_scale),
@@ -35,6 +36,13 @@ class Tile(object):
         self.direct_neighbours = {}
         self.riddle = None
 
+        # Pathfinding variables
+        self.h_score = 0
+        self.g_score = 0
+        self.is_seen = False
+        self.is_visited = False
+        self.parent = None
+
     def possible_stop_neighbours(self):
         possible = []
         for neighbour in self.step_neighbours.values():
@@ -44,11 +52,8 @@ class Tile(object):
 
     def set_sprite(self):
         # Set correct sprites for floor tiles
-        if self.tile_type in (self.TYPE_FLOOR, self.TYPE_START, self.TYPE_END):
-            floor_neighbours_keys = []
-            for key, neighbour in self.direct_neighbours.items():
-                if neighbour.tile_type in (self.TYPE_FLOOR, self.TYPE_START, self.TYPE_END):
-                    floor_neighbours_keys.append(key)
+        if self.tile_type is self.TYPE_FLOOR:
+            floor_neighbours_keys = self.floor_neighbours().keys()
 
             floor_amount = len(floor_neighbours_keys)
             floor_direction = min(floor_neighbours_keys)
@@ -76,12 +81,38 @@ class Tile(object):
             if self.DIRECTION_UP in self.direct_neighbours and self.direct_neighbours[self.DIRECTION_UP].tile_type is self.TYPE_FLOOR:
                 self.sprite = self.pillar_sprite
 
+        # Set correct sprites for start and end tile
+        elif self.tile_type in (self.TYPE_START, self.TYPE_END):
+            self.sprite = self.floor_sprites[2][0]
+
+        # Set correct sprite for door tiles
+        elif self.tile_type is self.TYPE_DOOR:
+            self.sprite = self.door_sprite
+
         if self.sprite:
             self.sprite.set_pos((self.x * self.sprite.size[0], self.y * self.sprite.size[1]))
             self.sprite.add(self.sprite_group)
 
+    def floor_neighbours(self):
+        floor_neighbours = {}
+        for key, neighbour in self.direct_neighbours.items():
+            if neighbour.tile_type in (self.TYPE_FLOOR, self.TYPE_START, self.TYPE_END):
+                floor_neighbours[key] = neighbour
+        return floor_neighbours
 
     def update_type(self, tile_type):
         self.tile_type = tile_type
-        # if tile_type in (self.TYPE_FLOOR, self.TYPE_START, self.TYPE_END):
-        #     self.sprite.remove(self.sprite_group)
+
+    def f_score(self):
+        return self.g_score + self.h_score
+
+    def reset_pathfinding(self):
+        self.g_score = 0
+        self.is_seen = False
+        self.is_visited = False
+
+    def __lt__(self, other):
+        return self.f_score() < other.f_score()
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.x, self.y)
