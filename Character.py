@@ -80,12 +80,13 @@ class Character(pygame.sprite.Sprite):
         else:
             self.is_running = False
 
+    # Handle a collision so the character can not walk into non-floor tiles
     def collide(self, other):
-        if self.direction[0] > 0 and self.rect.x > other.rect.x:
+        if self.direction[0] > 0:
             self.rect.right = other.rect.left
-        elif self.direction[0] < 0 and self.rect.x < other.rect.x:
+        elif self.direction[0] < 0:
             self.rect.left = other.rect.right
-        elif self.direction[1] > 0 and self.rect.y < other.rect.y:
+        elif self.direction[1] > 0:
             self.rect.bottom = other.rect.top
-        elif self.direction[1] < 0 and self.rect.y > other.rect.y:
+        elif self.direction[1] < 0:
             self.rect.top = other.rect.bottom

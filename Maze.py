@@ -4,7 +4,6 @@ from Tile import Tile
 from Spritesheet import *
 import random
 
-
 class Maze(object):
     def __init__(self, width, height, size):
         if width % 2 is 0:
@@ -19,13 +18,15 @@ class Maze(object):
         self.door_sprite_group = pygame.sprite.Group()
         self.width = width
         self.height = height
-        self.tile_scale = (size[0] / width / 16)
+        self.tile_size = size[0]/width
+        self.tile_scale = self.tile_size/ 16
         self.grid = [[Tile(x, y, spritesheet, self.maze_sprite_group, self.void_sprite_group, self.door_sprite_group, self.tile_scale) for y in range(self.height)] for x in range(self.width)]
         self.start = self.grid[2*int(random.uniform(0, self.width//2))+1][0]
         self.end = self.grid[2*int(random.uniform(0, self.width//2))+1][height-1]
         self.set_neighbours()
         self.generate_maze()
 
+        # Block of paths to end with doors until no more possible paths exist
         path = self.find_best_path()
         while path is not None:
             path.remove(self.start)
@@ -38,7 +39,7 @@ class Maze(object):
         self.render_console()
 
     def set_neighbours(self):
-        # Set step_neighbours
+        # Set step neighbours (the first and second tile in every direction)
         for x in range(1, self.width, 2):
             for y in range(1, self.height, 2):
                 grid_tile = self.grid[x][y]
@@ -64,6 +65,7 @@ class Maze(object):
                 if x > 1:
                     grid_tile.direct_neighbours[Tile.DIRECTION_LEFT] = self.grid[x-1][y]
 
+    # Set the h-score of each tile to the manhatten distance to the end tile
     def set_h_scores(self):
         for row in self.grid:
             for tile in row:
@@ -74,6 +76,7 @@ class Maze(object):
             for tile in row:
                 tile.reset_pathfinding()
 
+    # Generate a perfect maze using recursive depth-first maze generation
     def generate_maze(self):
         self.start.update_type(Tile.TYPE_START)
         self.end.update_type(Tile.TYPE_END)
@@ -83,6 +86,7 @@ class Maze(object):
             if neighbour[1].tile_type is Tile.TYPE_VOID:
                 self.do_generate_step(neighbour)
 
+        # Change some void tiles into floor tiles to create multiple paths from start to end
         destroyable_void_tiles = []
         for row in self.grid[1:len(self.grid)-2]:
             for tile in row[1:len(row)-2]:
@@ -104,6 +108,7 @@ class Maze(object):
             if neighbour[1].tile_type is Tile.TYPE_VOID:
                 self.do_generate_step(neighbour)
 
+    # Find the best possible path from start to end using an A* search algorithm
     def find_best_path(self):
         self.reset_pathfinding()
         self.start.g_score = 0
@@ -168,9 +173,18 @@ class Maze(object):
                             neighbour.update_sprite()
 
     def collision(self, character):
-        collided_tiles = pygame.sprite.spritecollide(character, self.void_sprite_group, 0, collide_hitbox)
-        if collided_tiles:
-            character.collide(collided_tiles[-1])
-        collided_doors = pygame.sprite.spritecollide(character, self.door_sprite_group, 0, collide_hitbox)
-        if collided_doors:
-            collided_doors[-1].collide()
+        for row in self.grid:
+            for tile in row:
+                if tile.tile_type is Tile.TYPE_VOID or (tile.tile_type is Tile.TYPE_DOOR and not tile.sprite.is_open):
+                    if character.rect.right > tile.sprite.rect.left and character.rect.left < tile.sprite.rect.right and character.rect.bottom > tile.sprite.rect.top and character.rect.top < tile.sprite.rect.bottom:
+                        character.collide(tile.sprite)
+                        if tile.tile_type is Tile.TYPE_DOOR:
+                            tile.sprite.collide()
+
+
+        # collided_tiles = pygame.sprite.spritecollide(character, self.void_sprite_group, 0, collide_hitbox)
+        # if collided_tiles:
+        #     character.collide(collided_tiles[-1])
+        # collided_doors = pygame.sprite.spritecollide(character, self.door_sprite_group, 0, collide_hitbox)
+        # if collided_doors:
+        #     collided_doors[-1].collide()

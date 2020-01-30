@@ -39,7 +39,6 @@ class Tile(object):
         self.sprite = None
         self.step_neighbours = {}
         self.direct_neighbours = {}
-        self.riddle = None
 
         # Pathfinding variables
         self.h_score = 0
@@ -60,26 +59,28 @@ class Tile(object):
         if self.tile_type is self.TYPE_FLOOR:
             floor_neighbours_keys = self.floor_neighbours().keys()
             floor_amount = len(floor_neighbours_keys)
-            if floor_neighbours_keys:
+            if floor_amount is 0:
+                self.sprite = self.floor_sprites[0]
+            else:
                 floor_direction = min(floor_neighbours_keys)
 
-            if floor_amount is 2:
-                if sum(floor_neighbours_keys) % 2 is 0:
-                    # Straight line floor
-                    self.sprite = self.floor_sprites[2][0]
+                if floor_amount is 2:
+                    if sum(floor_neighbours_keys) % 2 is 0:
+                        # Straight line floor
+                        self.sprite = self.floor_sprites[2][0]
+                    else:
+                        # Corner floor
+                        self.sprite = self.floor_sprites[2][1]
+                        if min(floor_neighbours_keys) == 0 and max(floor_neighbours_keys) == 3:
+                            floor_direction -= 1
                 else:
-                    # Corner floor
-                    self.sprite = self.floor_sprites[2][1]
-                    if min(floor_neighbours_keys) == 0 and max(floor_neighbours_keys) == 3:
-                        floor_direction -= 1
-            else:
-                if floor_amount is 3:
-                    for direction in (self.DIRECTION_UP, self.DIRECTION_RIGHT, self.DIRECTION_DOWN, self.DIRECTION_LEFT):
-                        if direction not in floor_neighbours_keys:
-                            floor_direction = direction
-                self.sprite = self.floor_sprites[floor_amount]
+                    if floor_amount is 3:
+                        for direction in (self.DIRECTION_UP, self.DIRECTION_RIGHT, self.DIRECTION_DOWN, self.DIRECTION_LEFT):
+                            if direction not in floor_neighbours_keys:
+                                floor_direction = direction
+                    self.sprite = self.floor_sprites[floor_amount]
 
-            self.sprite.rotate(floor_direction)
+                self.sprite.rotate(floor_direction)
 
         # Set correct sprites for void tiles (to be implemented)
         elif self.tile_type is self.TYPE_VOID:
@@ -108,6 +109,7 @@ class Tile(object):
         self.sprite.kill()
         self.set_sprite()
 
+    # Get the neighbours that are floor tiles for setting the sprite with the correct floor connections
     def floor_neighbours(self):
         floor_neighbours = {}
         for key, neighbour in self.direct_neighbours.items():

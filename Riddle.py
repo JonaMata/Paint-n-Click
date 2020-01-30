@@ -5,7 +5,9 @@ from Text import Text
 class Riddle(object):
     def __init__(self):
         possible_riddles = [
-            ('riddle', 'answer')
+            ('It reverses our breath', 'tree'),
+            ('It winkles in your eye, very high in the sky', 'star'),
+            ('He sits on a lap, just so he can nap', 'cat')
         ]
 
         self.riddle = possible_riddles[random.randrange(0, len(possible_riddles))]
@@ -15,4 +17,4 @@ class Riddle(object):
         self.text.render(screen)
 
     def check_solution(self, drawing_camera):
-        return self.riddle[0] in drawing_camera.get_prediction()
+        return self.riddle[1] in drawing_camera.get_prediction()

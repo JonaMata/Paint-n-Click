@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 from tensorflow_files.predictor import predict_drawing
 
+# A wrapper class for the opencv and tensorflow sketch recognition
+
 
 class DrawingCamera(object):
 	def __init__(self):
@@ -37,7 +39,6 @@ class DrawingCamera(object):
 		return self.frame
 
 	def get_prediction(self):
-		print(self.prediction)
 		return self.prediction
 
 	def release(self):
