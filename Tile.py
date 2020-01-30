@@ -104,6 +104,10 @@ class Tile(object):
             else:
                 self.sprite.add(self.maze_sprite_group)
 
+    def update_sprite(self):
+        self.sprite.kill()
+        self.set_sprite()
+
     def floor_neighbours(self):
         floor_neighbours = {}
         for key, neighbour in self.direct_neighbours.items():

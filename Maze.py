@@ -155,6 +155,18 @@ class Maze(object):
         for door in self.door_sprite_group:
             door.render_riddle(screen)
 
+    def update(self, drawing_camera):
+        for x in range(1, self.width):
+            for y in range(1, self.height):
+                grid_tile = self.grid[x][y]
+                if grid_tile.tile_type == grid_tile.TYPE_DOOR:
+                    grid_tile.sprite.update(drawing_camera)
+                    if grid_tile.sprite.is_open:
+                        grid_tile.tile_type = grid_tile.TYPE_FLOOR
+                        grid_tile.update_sprite()
+                        for key, neighbour in grid_tile.direct_neighbours.items():
+                            neighbour.update_sprite()
+
     def collision(self, character):
         collided_tiles = pygame.sprite.spritecollide(character, self.void_sprite_group, 0, collide_hitbox)
         if collided_tiles:

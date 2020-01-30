@@ -13,3 +13,6 @@ class Riddle(object):
 
     def render(self, screen):
         self.text.render(screen)
+
+    def check_solution(self, drawing_camera):
+        return self.riddle[0] in drawing_camera.get_prediction()

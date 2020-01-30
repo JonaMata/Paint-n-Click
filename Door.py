@@ -16,9 +16,9 @@ class Door(Sprite):
             self.riddle.render(screen)
         self.collided = False
 
-    def open(self):
-        self.is_open = True
-        self.kill()
+    def update(self, drawing_camera):
+        if self.riddle.check_solution(drawing_camera):
+            self.is_open = True
 
     def set_pos(self, pos):
         self.rect.x = pos[0]
@@ -26,6 +26,8 @@ class Door(Sprite):
 
     def collide(self):
         self.collided = True
+        self.is_open = True
+        print("boi")
 
 
 

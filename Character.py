@@ -2,7 +2,7 @@ from Spritesheet import *
 
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, pos, tile_scale, animation_speed, speed=2, colorkey=(0, 255, 0)):
+    def __init__(self, pos, tile_scale, animation_speed=1, speed=2, colorkey=(0, 255, 0)):
         super().__init__()
         # Character from https://0x72.itch.io/dungeontileset-ii
         spritesheet = SpriteSheet("assets/png/character.png")

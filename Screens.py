@@ -83,8 +83,8 @@ class IntroScreen(Screen):
 class MazeScreen(Screen):
 	def __init__(self, size, manager, drawing_camera):
 		super().__init__(size, manager, drawing_camera)
-		self.maze = Maze(20, 20, size)
-		self.character = Character((self.maze.start.x*self.maze.tile_scale*16, 0), self.maze.tile_scale, 1, 6)
+		self.maze = Maze(10, 10, size)
+		self.character = Character((self.maze.start.x*self.maze.tile_scale*16, 0), self.maze.tile_scale, 1, 8)
 		self.colors["background"] = (33, 30, 39)
 		self.next_screen = self.manager.screens[0]
 		self.screen_name = "Maze"
@@ -97,6 +97,7 @@ class MazeScreen(Screen):
 	def update(self, dt):
 		super().update(dt)
 		self.character.update()
+		self.maze.update(self.drawing_camera)
 		self.maze.collision(self.character)
 
 	def handle_events(self, events):

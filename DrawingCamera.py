@@ -32,7 +32,7 @@ class DrawingCamera(object):
 		return self.frame
 
 	def get_prediction(self):
-		print(self.prediction)
+		# print(self.prediction)
 		return self.prediction
 
 	def release(self):
