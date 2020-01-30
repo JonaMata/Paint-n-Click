@@ -59,8 +59,8 @@ class Tile(object):
         # Set correct sprites for floor tiles
         if self.tile_type is self.TYPE_FLOOR:
             floor_neighbours_keys = self.floor_neighbours().keys()
+            floor_amount = len(floor_neighbours_keys)
             if floor_neighbours_keys:
-                floor_amount = len(floor_neighbours_keys)
                 floor_direction = min(floor_neighbours_keys)
 
             if floor_amount is 2:

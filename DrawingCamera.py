@@ -21,10 +21,15 @@ class DrawingCamera(object):
 		kernel = np.ones((8, 8), np.uint8)
 		dilated_frame = cv2.erode(gray_frame, kernel)
 		resized_frame = cv2.resize(dilated_frame, (28, 28), cv2.INTER_NEAREST)
-		preview_frame = cv2.resize(resized_frame, (200, 200), cv2.INTER_NEAREST)
+		preview_frame = cv2.resize(resized_frame, (400, 400), cv2.INTER_NEAREST)
 
 		self.prediction = predict_drawing(resized_frame)
-		self.prediction = " "
+		preview_frame = cv2.putText(preview_frame, str(np.flip(self.prediction)),
+					(0, 20),
+					cv2.FONT_HERSHEY_SIMPLEX,
+					0.5,
+					(255, 255)
+		)
 		self.frame = crop_frame
 		cv2.imshow("input preview", preview_frame)
 
@@ -32,7 +37,7 @@ class DrawingCamera(object):
 		return self.frame
 
 	def get_prediction(self):
-		# print(self.prediction)
+		print(self.prediction)
 		return self.prediction
 
 	def release(self):
