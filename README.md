@@ -11,7 +11,7 @@ We used the following tutorial for the TensorFlow model: https://github.com/tens
 
 # How it's done
 The objective of the game is to answer riddles to be able to proceed through a randomly generated maze   
-![](assets/README/capture_intro.gif)
+![](assets/README/capture_maze.gif)
 
 For the input of the model we use OpenCV to resize a webcam input to 28x28 grayscale.
 as you can see in [drawing_camera.py](DrawingCamera.py)

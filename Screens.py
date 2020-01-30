@@ -45,7 +45,7 @@ class ScreenManager(object):
 		self.size = size
 		self.drawing_camera = DrawingCamera()
 		self.screens = Screen.__subclasses__()
-		self.initial_screen = self.screens[1]
+		self.initial_screen = self.screens[0]
 		self.current_screen = self.initial_screen(self.size, self, self.drawing_camera)
 
 	def next(self):

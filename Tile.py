@@ -1,4 +1,3 @@
-from Riddle import Riddle
 from Spritesheet import Sprite
 from Door import Door
 

@@ -15,7 +15,7 @@ class Riddle(object):
         ]
 
         self.riddle = possible_riddles[random.randrange(0, len(possible_riddles))]
-        self.riddle = possible_riddles[3]
+        # self.riddle = possible_riddles[3]
         self.text = Text(self.riddle[0], (0, 0), 'small', False, (255, 255, 255))
 
     def render(self, screen):
