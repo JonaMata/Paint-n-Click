@@ -18,7 +18,6 @@ class Door(Sprite):
         self.collided = False
 
     def update(self, drawing_camera):
-        print('update')
         if self.riddle.check_solution(drawing_camera) and self.is_seen:
             self.is_open = True
 
